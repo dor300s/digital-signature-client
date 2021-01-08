@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 #cert
+.env
 /cert.pem
 /key.pem
 /debug.log

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-import { getPdf, savePdf } from '../services/pdfService';
+import { getPdf } from '../services/pdfService';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -10,18 +10,44 @@ let page;
 let renderCtx;
 let loadedPdf;
 
+const initialStyle = {
+    left: (window.innerWidth - 85) + 'px',
+    top: (window.innerHeight - 245) + 'px',
+    width: 80 + 'px',
+    height: 240 + 'px',
+}
 
 export const EditPdf = (props) => {
     const pdfId = props.match.params.id;
     const canvasRef = useRef();
     const [isLoading, setIsLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [navPosition, setNavPosition] = useState(initialStyle);
+
 
     useEffect(() => {
-        console.log(canvasRef);
+        window.visualViewport.addEventListener("resize", viewportHandler);
+        window.visualViewport.addEventListener("scroll", viewportHandler);
+
+        return (() => {
+            window.visualViewport.removeEventListener("resize", viewportHandler);
+            window.visualViewport.removeEventListener("scroll", viewportHandler);
+        })
+    }, [])
+
+    const viewportHandler = (e) => {
+        const style = {
+            left: (e.target.width + e.target.offsetLeft - 85 * (1 / e.target.scale)) + 'px',
+            top: (e.target.height + e.target.offsetTop - 245 * (1 / e.target.scale)) + 'px',
+            width: 80 * (1 / e.target.scale) + 'px',
+            height: 240 * (1 / e.target.scale) + 'px',
+        }
+        setNavPosition(style);
+    }
+
+    useEffect(() => {
         ctx = canvasRef.current.getContext('2d');
         onGetPdf();
-        console.log(props);
     }, [canvasRef])
 
     async function onGetPdf() {
@@ -117,18 +143,19 @@ export const EditPdf = (props) => {
     return (
         <div className="edit-pdf-container">
 
-            <div className="nav-wrapper">
-                <div>
-                    <button onClick={() => setIsEditMode((prev) => !prev)}>EDIT</button>
-                    <button onClick={clearCanvas}>CLEAR</button>
-                    <h3>{isEditMode ? 'yes' : 'no'}</h3>
-                    <button onClick={getWhatsappHref}>SEND</button>
+            <div className="nav-wrapper" style={navPosition && { ...navPosition }}>
+                <div className="actions flex column space-between">
+                    <button className={`edit ${isEditMode ? 'active' : ''}`} onClick={() => setIsEditMode((prev) => !prev)} />
+                    <button className="reset" onClick={clearCanvas} />
+                    <button className="share" onClick={getWhatsappHref} />
                 </div>
             </div>
 
-            <canvas ref={canvasRef} className="pdf-canvas" onMouseDown={startPosition} onMouseMove={handleMouseMove}
-                onMouseUp={finishPosition} onTouchStart={startPosition} onTouchMove={handleTouchMove}
-                onTouchEnd={finishPosition} style={{ touchAction: isEditMode ? 'none' : 'auto' }}></canvas>
+            <div className="canvas-container">
+                <canvas ref={canvasRef} className="pdf-canvas" onMouseDown={startPosition} onMouseMove={handleMouseMove}
+                    onMouseUp={finishPosition} onTouchStart={startPosition} onTouchMove={handleTouchMove}
+                    onTouchEnd={finishPosition} style={{ touchAction: isEditMode ? 'none' : 'auto' }}></canvas>
+            </div>
 
         </div>
     );
