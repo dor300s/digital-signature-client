@@ -1,4 +1,5 @@
 .app-container {
+    @include for-wide-layout {
         display: grid;
         grid-template-columns: 20px 1fr 20px;
 
@@ -38,8 +39,8 @@
                 grid-column: 1 / -1;
             }
         }
+    }
 }
-
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

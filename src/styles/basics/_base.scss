@@ -53,5 +53,9 @@ h6 {
         color: $clr6;
         padding: 10px;
         border-radius: 4px;
+        margin-left: 10px;
+        @include for-wide-layout{
+            margin-left: 0;
+        }
     }
 }

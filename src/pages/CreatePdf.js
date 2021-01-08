@@ -20,6 +20,7 @@ const initialStyle = {
 
 export const CreatePdf = () => {
     const canvasRef = useRef();
+    const fileName = useRef('file.png');
     const [isLoading, setIsLoading] = useState(false);
     const [link, setLink] = useState();
     const [navPosition, setNavPosition] = useState(initialStyle);
@@ -56,6 +57,8 @@ export const CreatePdf = () => {
     const handlePdf = async (e) => {
         setLink(null)
         file.onload = () => {
+            // fileName = e.target.files[0].name;
+            fileName.current = e.target.files[0].name.split('.')[0];
             onRenderCtx(file.result);
         }
         if (e.target.files.length) await file.readAsDataURL(e.target.files[0])
@@ -80,7 +83,7 @@ export const CreatePdf = () => {
         if (!file.result) return;
         setIsLoading(true);
         try {
-            const pdfToSave = { data: file.result }
+            const pdfToSave = { data: file.result, name: fileName.current }
             const savedPdf = await savePdf(pdfToSave);
             setLink(window.location.origin + '/' + savedPdf._id);
         }

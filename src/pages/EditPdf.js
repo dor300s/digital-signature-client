@@ -8,7 +8,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 let ctx;
 let page;
 let renderCtx;
-let loadedPdf;
 
 const initialStyle = {
     left: (window.innerWidth - 85) + 'px',
@@ -19,7 +18,9 @@ const initialStyle = {
 
 export const EditPdf = (props) => {
     const pdfId = props.match.params.id;
+    const loadedPdf = useRef();
     const canvasRef = useRef();
+
     const [isLoading, setIsLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [navPosition, setNavPosition] = useState(initialStyle);
@@ -52,10 +53,10 @@ export const EditPdf = (props) => {
 
     async function onGetPdf() {
         setIsLoading(true);
-        loadedPdf = await getPdf(pdfId);
+        loadedPdf.current = await getPdf(pdfId);
         setIsLoading(false);
-        if (!loadedPdf) return;
-        onRenderCtx(loadedPdf.data)
+        if (!loadedPdf.current) return;
+        onRenderCtx(loadedPdf.current.data)
     }
 
     async function onRenderCtx(data) {
@@ -124,14 +125,15 @@ export const EditPdf = (props) => {
             return new File([u8arr], filename, { type: mime });
         }
 
-        const file = dataURLtoFile(data, 'Testttttt.png');
+        const fileName = loadedPdf?.current?.name || 'קבלה';
+
+        const file = dataURLtoFile(data, fileName + '.png');
         const filesArray = [file];
 
-        if (navigator.canShare && navigator.canShare({ files: filesArray })) {
+        if (navigator.share) /* && navigator.canShare({ files: filesArray })) */ {
             navigator.share({
                 files: filesArray,
-                title: 'Pictures',
-                text: 'Our Pictures.',
+                text: fileName,
             })
                 .then(() => console.log('Share was successful.'))
                 .catch((error) => console.log('Sharing failed', error));
