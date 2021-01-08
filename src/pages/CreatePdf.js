@@ -57,7 +57,6 @@ export const CreatePdf = () => {
     const handlePdf = async (e) => {
         setLink(null)
         file.onload = () => {
-            // fileName = e.target.files[0].name;
             fileName.current = e.target.files[0].name.split('.')[0];
             onRenderCtx(file.result);
         }

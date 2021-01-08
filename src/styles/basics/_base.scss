@@ -46,16 +46,17 @@ h6 {
 }
 
 .logo-container {
-    height: 100px;
+    margin: 25px 0;
+    height: 50px;
+    width: 250px;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-left: 10px;
+    @include for-wide-layout {
+        margin-left: 0;
+    }
     .logo {
-        font-size: 2rem;
-        background-color: $clr1;
-        color: $clr6;
-        padding: 10px;
-        border-radius: 4px;
-        margin-left: 10px;
-        @include for-wide-layout{
-            margin-left: 0;
-        }
+        content: url(../../images/D-signature-logo.png);
+        width: 100%;
     }
 }

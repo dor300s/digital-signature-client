@@ -130,7 +130,7 @@ export const EditPdf = (props) => {
         const file = dataURLtoFile(data, fileName + '.png');
         const filesArray = [file];
 
-        if (navigator.share) /* && navigator.canShare({ files: filesArray })) */ {
+        if (navigator.share) {
             navigator.share({
                 files: filesArray,
                 text: fileName,
