@@ -12,9 +12,15 @@ export const App = () => {
         <div className="logo" />
       </div>
       <Switch>
-        <Route component={EditPdf} path="/:id" />
+        <Route component={EditPdf} path="/preview/:id" />
         <Route component={CreatePdf} path="/" />
       </Switch>
     </div>
   )
 }
+
+// TODOS:
+// Remove old files from DB
+// Start preview zoomed out
+// Loading info
+// Save successfuly info

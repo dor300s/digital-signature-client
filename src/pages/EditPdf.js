@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-import { getPdf } from '../services/pdfService';
+import { getPdf, savePdf } from '../services/pdfService';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -24,6 +24,7 @@ export const EditPdf = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [navPosition, setNavPosition] = useState(initialStyle);
+    const [isPdfEdited, setIsPdfEdited] = useState();
 
 
     useEffect(() => {
@@ -47,48 +48,57 @@ export const EditPdf = (props) => {
     }
 
     useEffect(() => {
-        ctx = canvasRef.current.getContext('2d');
+        ctx = canvasRef.current.getContext('2d', { desynchronized: true });
         onGetPdf();
     }, [canvasRef])
+
+
 
     async function onGetPdf() {
         setIsLoading(true);
         loadedPdf.current = await getPdf(pdfId);
-        setIsLoading(false);
         if (!loadedPdf.current) return;
-        onRenderCtx(loadedPdf.current.data)
+        setIsPdfEdited(loadedPdf.current.edited);
+        onRenderCtx(loadedPdf.current.data);
+        setIsLoading(false);
     }
 
     async function onRenderCtx(data) {
-        const doc = await pdfjsLib.getDocument(data).promise;
-        page = await doc.getPage(1);
-        const viewport = await page.getViewport({ scale: 2 });
-        canvasRef.current.height = viewport.height;
-        canvasRef.current.width = viewport.width;
-        renderCtx = {
-            canvasContext: ctx,
-            viewport
+        if (!loadedPdf.current.edited) {
+            const doc = await pdfjsLib.getDocument(data).promise;
+            page = await doc.getPage(1);
+            const viewport = await page.getViewport({ scale: 2 });
+            canvasRef.current.height = viewport.height;
+            canvasRef.current.width = viewport.width;
+            renderCtx = {
+                canvasContext: ctx,
+                viewport
+            }
+            await page.render(renderCtx).promise;
+
+        } else {
+            const img = new Image;
+            img.onload = () => {
+                canvasRef.current.height = img.height;
+                canvasRef.current.width = img.width;
+                ctx.drawImage(img, 0, 0);
+            }
+            img.src = data;
         }
-        await page.render(renderCtx).promise;
     }
 
-    function startPosition() {
-        if (!isEditMode) return;
+    function onToggleEditMode() {
+        if (!loadedPdf.current.edited) setIsEditMode((prev) => !prev);
     }
 
-    function finishPosition() {
-        if (!isEditMode) return;
-        ctx.beginPath();
-    }
-
-    function handleMouseMove(e) {
+    function handleMouseDraw(e) {
         if (e.nativeEvent.which !== 1 || !isEditMode) return;
         const offsetX = e.nativeEvent.offsetX;
         const offsetY = e.nativeEvent.offsetY;
         draw(offsetX, offsetY);
     }
 
-    function handleTouchMove(e) {
+    function handleTouchDraw(e) {
         if (e.touches.length !== 1 || !isEditMode) return;
         var x = e.touches[0].clientX - e.touches[0].target.offsetLeft;
         var y = e.touches[0].clientY - e.touches[0].target.offsetTop;
@@ -102,60 +112,89 @@ export const EditPdf = (props) => {
         ctx.stroke();
     }
 
+    function finishPosition() {
+        if (!isEditMode) return;
+        ctx.beginPath();
+    }
+
     async function clearCanvas() {
-        if (!page) return;
+        if (!page || loadedPdf.current.edited) return;
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         await page.render(renderCtx).promise;
     }
 
 
-    function getWhatsappHref() {
+    async function onUpdatePdf() {
+        if (!loadedPdf.current) return;
+        const data = canvasRef.current.toDataURL("image/png");
+        setIsLoading(true);
+        setIsEditMode(false);
+        const updatedPdf = await savePdf({ ...loadedPdf.current, data });
+        loadedPdf.current = updatedPdf;
+        if (!loadedPdf.current) return;
+        setIsPdfEdited(loadedPdf.current.edited);
+        onRenderCtx(loadedPdf.current.data);
+        setIsLoading(false);
 
-        let data = canvasRef.current.toDataURL("image/png");
 
-        function dataURLtoFile(dataurl, filename) {
-            let arr = dataurl.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
-                n = bstr.length,
-                u8arr = new Uint8Array(n);
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-            }
-            return new File([u8arr], filename, { type: mime });
-        }
+        // function dataURLtoFile(dataurl, filename) {
+        //     let arr = dataurl.split(','),
+        //         mime = arr[0].match(/:(.*?);/)[1],
+        //         bstr = atob(arr[1]),
+        //         n = bstr.length,
+        //         u8arr = new Uint8Array(n);
+        //     console.log(u8arr);
+        //     while (n--) {
+        //         u8arr[n] = bstr.charCodeAt(n);
+        //     }
+        //     console.log(u8arr);
+        //     return new File([u8arr], filename, { type: mime });
+        // }
 
-        const fileName = loadedPdf?.current?.name || 'קבלה';
 
-        const file = dataURLtoFile(data, fileName + '.png');
-        const filesArray = [file];
+        // const file = dataURLtoFile(data, fileName + '.png');
+        // console.log(file);
+        // const filesArray = [file];
 
-        if (navigator.share) {
-            navigator.share({
-                files: filesArray,
-                text: fileName,
-            })
-                .then(() => console.log('Share was successful.'))
-                .catch((error) => console.log('Sharing failed', error));
-        } else {
-            console.log(`Your system doesn't support sharing files.`);
-        }
+        // if (navigator.share) {
+        //     navigator.share({
+        //         files: filesArray,
+        //         text: fileName,
+        //     })
+        //         .then(() => console.log('Share was successful.'))
+        //         .catch((error) => console.log('Sharing failed', error));
+        // } else {
+        //     console.log(`Your system doesn't support sharing files.`);
+        // }
+
+    }
+
+    function onDownloadPdf() {
+        const fileName = (loadedPdf?.current?.name || 'קבלה') + '.png';
+        const a = document.createElement('a');
+        a.href = canvasRef.current.toDataURL();
+        a.download = fileName;
+        a.click();
     }
 
     return (
         <div className="edit-pdf-container">
-
             <div className="nav-wrapper" style={navPosition && { ...navPosition }}>
-                <div className="actions flex column space-between">
-                    <button className={`edit ${isEditMode ? 'active' : ''}`} onClick={() => setIsEditMode((prev) => !prev)} />
-                    <button className="reset" onClick={clearCanvas} />
-                    <button className="share" onClick={getWhatsappHref} />
+                <div className={`actions flex column ${isPdfEdited ? 'justify-end' : 'space-between'}`}>
+                    <button className={`edit ${isEditMode ? 'active' : ''}`} onClick={onToggleEditMode} hidden={isPdfEdited} />
+                    <button className="reset" onClick={clearCanvas} hidden={isPdfEdited} />
+                    {!isPdfEdited ?
+                        <button className="done" onClick={onUpdatePdf} /> :
+                        <>
+                            <div className="saved-successfuly flex align-center justify-center" ><p style={{ fontSize: navPosition.width }}>נשמר בהצלחה!</p></div>
+                            <button className="download" onClick={onDownloadPdf} />
+                        </>}
                 </div>
             </div>
 
             <div className="canvas-container">
-                <canvas ref={canvasRef} className="pdf-canvas" onMouseDown={startPosition} onMouseMove={handleMouseMove}
-                    onMouseUp={finishPosition} onTouchStart={startPosition} onTouchMove={handleTouchMove}
+                <canvas ref={canvasRef} className="pdf-canvas" onMouseDown={handleMouseDraw} onMouseMove={handleMouseDraw}
+                    onMouseUp={finishPosition} onTouchStart={handleTouchDraw} onTouchMove={handleTouchDraw}
                     onTouchEnd={finishPosition} style={{ touchAction: isEditMode ? 'none' : 'auto' }}></canvas>
             </div>
 

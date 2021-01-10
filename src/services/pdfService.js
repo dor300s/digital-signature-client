@@ -7,5 +7,7 @@ export function getPdf(id) {
 }
 
 export function savePdf(pdf) {
-    return axios.post(baseUrl, pdf).then(res => res.data);
+    return !pdf._id ?
+        axios.post(baseUrl, pdf).then(res => res.data) :
+        axios.put(baseUrl, pdf).then(res => res.data);
 }

@@ -27,22 +27,25 @@
                     background-repeat: no-repeat;
                     &:active {
                         background-color: rgb(0, 182, 85);
-                        // background-color: #27ae60;
                     }
                 }
 
                 &.link {
-                    background-image: url(../../images/link.svg);
+                    background-image: url(../../images/whatsapp.svg);
                     background-size: 50%;
                     background-position: center;
                     background-repeat: no-repeat;
+                    &:active {
+                        background-color: rgb(0, 182, 85);
+                    }
 
                     &.loading {
                         animation: 2s loading-anim infinite;
                     }
-                    &.copied {
-                        background-color: rgb(0, 182, 85);
-                    }
+
+                    // &.copied {
+                    //     background-color: rgb(0, 182, 85);
+                    // }
                 }
             }
         }

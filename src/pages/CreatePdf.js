@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { savePdf } from '../services/pdfService';
+import img from '../images/D-signature-logo.png';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -17,6 +18,7 @@ const initialStyle = {
     width: 80 + 'px',
     height: 160 + 'px',
 }
+
 
 export const CreatePdf = () => {
     const canvasRef = useRef();
@@ -51,15 +53,19 @@ export const CreatePdf = () => {
     }, [canvasRef])
 
     useEffect(() => {
-        if (link) navigator.clipboard.writeText(link)
+        if (!link) return;
+        if ('share' in navigator) window.open(`whatsapp://send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`)
+        else window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
     }, [link])
 
     const handlePdf = async (e) => {
-        setLink(null)
+        await setLink(null);
         file.onload = () => {
             fileName.current = e.target.files[0].name.split('.')[0];
             onRenderCtx(file.result);
         }
+
+
         if (e.target.files.length) await file.readAsDataURL(e.target.files[0])
     }
 
@@ -84,7 +90,7 @@ export const CreatePdf = () => {
         try {
             const pdfToSave = { data: file.result, name: fileName.current }
             const savedPdf = await savePdf(pdfToSave);
-            setLink(window.location.origin + '/' + savedPdf._id);
+            setLink(window.location.origin + '/preview/' + savedPdf._id);
         }
         finally {
             setIsLoading(false);
@@ -94,19 +100,19 @@ export const CreatePdf = () => {
     return (
         <div className="create-pdf-container">
             <div className="nav-wrapper" style={navPosition}>
+
                 <div className="actions flex column space-between">
                     <input className="pdf-input" id="pdf-file-input" type="file" accept="application/pdf" onChange={handlePdf} hidden />
                     <label className="upload" htmlFor="pdf-file-input">
                         <div />
                     </label>
-                    <div className={`link ${isLoading ? 'loading' : link ? 'copied' : ''}`} onClick={onSavePdf} />
+                    <div className={`link ${isLoading ? 'loading' : ''}`} onClick={onSavePdf} />
                 </div>
 
             </div>
             <div className="canvas-container">
                 <canvas ref={canvasRef} className="pdf-canvas"></canvas>
             </div>
-
         </div>
     );
 }
