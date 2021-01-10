@@ -42,7 +42,7 @@
                     // &.loading {
                     //     animation: 2s loading-anim infinite;
                     // }
-                    &.loading{
+                    &.loading {
                         background-color: transparent;
                         background-image: url(../../images/Dual_Ring_loader.svg);
                         background-size: 50%;
@@ -55,6 +55,20 @@
                     // &.copied {
                     //     background-color: rgb(0, 182, 85);
                     // }
+                }
+
+                &.phone-number {
+                    position: absolute;
+                    bottom: 0;
+                    background-color: $clr6;
+                    color: $clr1;
+                    transform: translateX(-45%);
+                    cursor: text;
+                    padding: 0 10px;
+                    border-radius: 2px;
+                    &::placeholder {
+                        direction: rtl;
+                    }
                 }
             }
         }

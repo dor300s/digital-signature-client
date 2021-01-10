@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { savePdf } from '../services/pdfService';
-import img from '../images/D-signature-logo.png';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -17,6 +16,8 @@ const initialStyle = {
     top: (window.innerHeight - 165) + 'px',
     width: 80 + 'px',
     height: 160 + 'px',
+    inputWidth: 200 + 'px',
+    inputFontSize: 25 + 'px'
 }
 
 
@@ -26,6 +27,7 @@ export const CreatePdf = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [link, setLink] = useState();
     const [navPosition, setNavPosition] = useState(initialStyle);
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     useEffect(() => {
         if (!window.visualViewport) return;
@@ -44,6 +46,8 @@ export const CreatePdf = () => {
             top: (e.target.height + e.target.offsetTop - 165 * (1 / e.target.scale)) + 'px',
             width: 80 * (1 / e.target.scale) + 'px',
             height: 160 * (1 / e.target.scale) + 'px',
+            inputWidth: 200 * (1 / e.target.scale) + 'px',
+            inputFontSize: 25 * (1 / e.target.scale) + 'px'
         }
         setNavPosition(style);
     }
@@ -54,8 +58,10 @@ export const CreatePdf = () => {
 
     useEffect(() => {
         if (!link) return;
-        if ('share' in navigator) window.open(`whatsapp://send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`)
-        else window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
+        const number = phoneNumber ? `972${phoneNumber.slice(1)}` : '';
+        // if ('share' in navigator) window.open(`whatsapp://send?phone=972526716633?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`)
+         if (!number) window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
+        else window.open(`https://wa.me/${number}/?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
     }, [link])
 
     const handlePdf = async (e) => {
@@ -107,6 +113,7 @@ export const CreatePdf = () => {
                         <div />
                     </label>
                     <div className={`link ${isLoading ? 'loading' : ''}`} onClick={onSavePdf} />
+                    <input className="phone-number" pattern="[0-9]{9-10}" value={phoneNumber} maxLength="10" placeholder="מספר טלפון" type="tel" style={{ width: navPosition.inputWidth, fontSize: navPosition.inputFontSize }} onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/, ''))} />
                 </div>
 
             </div>
