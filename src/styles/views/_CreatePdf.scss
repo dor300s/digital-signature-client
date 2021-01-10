@@ -45,11 +45,12 @@
                     &.loading {
                         background-color: transparent;
                         background-image: url(../../images/Dual_Ring_loader.svg);
-                        background-size: 50%;
+                        background-size: 80%;
                         background-position: center;
                         background-repeat: no-repeat;
                         box-shadow: none;
                         touch-action: none;
+                        
                     }
 
                     // &.copied {
@@ -62,10 +63,10 @@
                     bottom: 0;
                     background-color: $clr6;
                     color: $clr1;
-                    transform: translateX(-45%);
+                    transform: translate(-40%, -20%);
                     cursor: text;
                     padding: 0 10px;
-                    border-radius: 2px;
+                    border-radius: 4px;
                     &::placeholder {
                         direction: rtl;
                     }

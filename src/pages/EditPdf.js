@@ -85,6 +85,8 @@ export const EditPdf = (props) => {
             }
             img.src = data;
         }
+        console.log(window);
+        document.body.style.zoom=1.0
     }
 
     function onToggleEditMode() {

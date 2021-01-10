@@ -17,6 +17,7 @@ const initialStyle = {
     width: 80 + 'px',
     height: 160 + 'px',
     inputWidth: 200 + 'px',
+    inputHeight: 50 + 'px',
     inputFontSize: 25 + 'px'
 }
 
@@ -47,6 +48,7 @@ export const CreatePdf = () => {
             width: 80 * (1 / e.target.scale) + 'px',
             height: 160 * (1 / e.target.scale) + 'px',
             inputWidth: 200 * (1 / e.target.scale) + 'px',
+            inputHeight: 50 * (1 / e.target.scale) + 'px',
             inputFontSize: 25 * (1 / e.target.scale) + 'px'
         }
         setNavPosition(style);
@@ -112,7 +114,15 @@ export const CreatePdf = () => {
                         <div />
                     </label>
                     <div className={`link ${isLoading ? 'loading' : ''}`} onClick={onSavePdf} />
-                    <input className="phone-number" pattern="[0-9]{9-10}" value={phoneNumber} maxLength="10" placeholder="מספר טלפון" type="tel" style={{ width: navPosition.inputWidth, fontSize: navPosition.inputFontSize }} onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/, ''))} />
+                    <input
+                        className="phone-number"
+                        pattern="[0-9]{9-10}"
+                        value={phoneNumber}
+                        maxLength="10"
+                        placeholder="מספר טלפון"
+                        type="tel"
+                        style={{ width: navPosition.inputWidth, height: navPosition.inputHeight, fontSize: navPosition.inputFontSize }}
+                        onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/, ''))} />
                 </div>
 
             </div>

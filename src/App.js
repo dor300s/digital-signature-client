@@ -22,5 +22,3 @@ export const App = () => {
 // TODOS:
 // Remove old files from DB
 // Start preview zoomed out
-// Loading info
-// Save successfuly info
