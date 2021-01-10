@@ -58,10 +58,9 @@ export const CreatePdf = () => {
 
     useEffect(() => {
         if (!link) return;
-        const number = phoneNumber ? `972${phoneNumber.slice(1)}` : '';
-        // if ('share' in navigator) window.open(`whatsapp://send?phone=972526716633?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`)
-         if (!number) window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
-        else window.open(`https://wa.me/${number}/?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
+        const number = phoneNumber ? `/972${phoneNumber.slice(1)}` : '';
+        if ('share' in navigator || number) window.open(`https://wa.me${number}/?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
+        else window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
     }, [link])
 
     const handlePdf = async (e) => {
