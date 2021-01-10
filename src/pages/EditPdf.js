@@ -180,11 +180,11 @@ export const EditPdf = (props) => {
     return (
         <div className="edit-pdf-container">
             <div className="nav-wrapper" style={navPosition && { ...navPosition }}>
-                <div className={`actions flex column ${isPdfEdited ? 'justify-end' : 'space-between'}`}>
-                    <button className={`edit ${isEditMode ? 'active' : ''}`} onClick={onToggleEditMode} hidden={isPdfEdited} />
-                    <button className="reset" onClick={clearCanvas} hidden={isPdfEdited} />
+                <div className={`actions flex column ${(isPdfEdited || isLoading) ? 'justify-end' : 'space-between'}`}>
+                    <button className={`edit ${isEditMode ? 'active' : ''}`} onClick={onToggleEditMode} hidden={isPdfEdited || isLoading} />
+                    <button className="reset" onClick={clearCanvas} hidden={isPdfEdited || isLoading} />
                     {!isPdfEdited ?
-                        <button className="done" onClick={onUpdatePdf} /> :
+                        <button className={`done ${isLoading ? 'loading' : ''}`} onClick={onUpdatePdf} /> :
                         <>
                             <div className="saved-successfuly flex align-center justify-center" ><p style={{ fontSize: navPosition.width }}>נשמר בהצלחה!</p></div>
                             <button className="download" onClick={onDownloadPdf} />
