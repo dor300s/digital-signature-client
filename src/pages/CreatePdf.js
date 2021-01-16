@@ -29,6 +29,8 @@ export const CreatePdf = () => {
     const [link, setLink] = useState();
     const [navPosition, setNavPosition] = useState(initialStyle);
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [isPdfLoaded, setIsPdfLoaded] = useState(false);
+
 
     useEffect(() => {
         if (!window.visualViewport) return;
@@ -70,6 +72,7 @@ export const CreatePdf = () => {
         file.onload = () => {
             fileName.current = e.target.files[0].name.split('.')[0];
             onRenderCtx(file.result);
+            setIsPdfLoaded(true);
         }
 
 
@@ -110,7 +113,7 @@ export const CreatePdf = () => {
 
                 <div className="actions flex column space-between">
                     <input className="pdf-input" id="pdf-file-input" type="file" accept="application/pdf" onChange={handlePdf} hidden />
-                    <label className="upload" htmlFor="pdf-file-input">
+                    < label className={`upload ${isPdfLoaded ? '' : 'no-file-selected'}`} htmlFor="pdf-file-input">
                         <div />
                     </label>
                     <div className={`link ${isLoading ? 'loading' : ''}`} onClick={onSavePdf} />
@@ -126,9 +129,10 @@ export const CreatePdf = () => {
                 </div>
 
             </div>
-            <div className="canvas-container">
-                <canvas ref={canvasRef} className="pdf-canvas"></canvas>
+            <div className="canvas-container" >
+                <canvas ref={canvasRef} className="pdf-canvas" hidden={!isPdfLoaded}></canvas>
             </div>
+            <div className="no-pdf-file-message" hidden={isPdfLoaded}>PDF אנא בחר קובץ</div>
         </div>
     );
 }

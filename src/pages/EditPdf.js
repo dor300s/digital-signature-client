@@ -25,6 +25,7 @@ export const EditPdf = (props) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [navPosition, setNavPosition] = useState(initialStyle);
     const [isPdfEdited, setIsPdfEdited] = useState();
+    const [isTherePdf, setIsTherePdf] = useState(true);
 
 
     useEffect(() => {
@@ -52,15 +53,21 @@ export const EditPdf = (props) => {
         onGetPdf();
     }, [canvasRef])
 
-
-
     async function onGetPdf() {
         setIsLoading(true);
-        loadedPdf.current = await getPdf(pdfId);
-        if (!loadedPdf.current) return;
-        setIsPdfEdited(loadedPdf.current.edited);
-        onRenderCtx(loadedPdf.current.data);
-        setIsLoading(false);
+        try {
+            loadedPdf.current = await getPdf(pdfId);
+            // if (!loadedPdf.current) {
+
+            // }
+            setIsPdfEdited(loadedPdf.current.edited);
+            onRenderCtx(loadedPdf.current.data);
+            setIsLoading(false);
+        } catch (err) {
+            setIsTherePdf(false);
+            setIsLoading(false);
+            return;
+        }
     }
 
     async function onRenderCtx(data) {
@@ -85,8 +92,7 @@ export const EditPdf = (props) => {
             }
             img.src = data;
         }
-        console.log(window);
-        document.body.style.zoom=1.0
+        document.body.style.zoom = 1.0
     }
 
     function onToggleEditMode() {
@@ -199,6 +205,8 @@ export const EditPdf = (props) => {
                     onMouseUp={finishPosition} onTouchStart={handleTouchDraw} onTouchMove={handleTouchDraw}
                     onTouchEnd={finishPosition} style={{ touchAction: isEditMode ? 'none' : 'auto' }}></canvas>
             </div>
+
+            {!isTherePdf && <div className="no-pdf-file-message">לא נמצא PDF קובץ</div>}
 
         </div>
     );
