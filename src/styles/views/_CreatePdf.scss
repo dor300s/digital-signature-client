@@ -71,9 +71,7 @@
                     cursor: text;
                     padding: 0 10px;
                     border-radius: 4px;
-                    &::placeholder {
-                        direction: rtl;
-                    }
+                    direction: rtl;
                 }
             }
         }

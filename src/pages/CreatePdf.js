@@ -9,7 +9,12 @@ let ctx;
 let page;
 let renderCtx;
 const file = new FileReader();
-
+// const linkText = 'לקוח יקר זו הזמנת המקלחון החדש שלך ב אא מקלחונים אנא פתח את הקישור הכחול . לחץ על העיפרון (יהפוך לירוק) חתימה על המסך ואז בV לשליחה. תתחדשו';
+const linkText = `
+לקוח יקר,
+זו הזמנת המקלחון החדש שלך ב אא מקלחונים אנא פתח את הקישור הכחול .
+לחץ על העיפרון (יהפוך לירוק) חתימה על המסך ואז בV לשליחה.
+תתחדשו`;
 
 const initialStyle = {
     left: (window.innerWidth - 85) + 'px',
@@ -63,8 +68,8 @@ export const CreatePdf = () => {
     useEffect(() => {
         if (!link) return;
         const number = phoneNumber ? `/972${phoneNumber.slice(1)}` : '';
-        if ('share' in navigator || number) window.open(`https://wa.me${number}/?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
-        else window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(`${link} חתימה דיגיטלית`)}`);
+        if ('share' in navigator || number) window.open(`https://wa.me${number}/?text=${encodeURIComponent(link + ' ' + linkText)}`);
+        else window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(link + ' ' + linkText)}`);
     }, [link])
 
     const handlePdf = async (e) => {

@@ -151,13 +151,12 @@ export const EditPdf = (props) => {
         //         bstr = atob(arr[1]),
         //         n = bstr.length,
         //         u8arr = new Uint8Array(n);
-        //     console.log(u8arr);
         //     while (n--) {
         //         u8arr[n] = bstr.charCodeAt(n);
         //     }
-        //     console.log(u8arr);
         //     return new File([u8arr], filename, { type: mime });
         // }
+
 
 
         // const file = dataURLtoFile(data, fileName + '.png');
