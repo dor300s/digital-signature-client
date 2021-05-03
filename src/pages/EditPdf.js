@@ -204,9 +204,18 @@ export const EditPdf = (props) => {
             </div>
 
             <div className="canvas-container">
-                <canvas ref={canvasRef} className="pdf-canvas" onMouseDown={handleMouseDraw} onMouseMove={handleMouseDraw}
-                    onMouseUp={finishPosition} onTouchStart={handleTouchDraw} onTouchMove={handleTouchDraw}
-                    onTouchEnd={finishPosition} style={{ touchAction: isEditMode ? 'none' : 'auto' }}></canvas>
+                <canvas
+                    ref={canvasRef} c
+                    lassName="pdf-canvas"
+                    onMouseDown={handleMouseDraw}
+                    onMouseMove={handleMouseDraw}
+                    onMouseUp={finishPosition}
+                    onTouchStart={handleTouchDraw}
+                    onTouchMove={handleTouchDraw}
+                    onTouchEnd={finishPosition}
+                    style={{ touchAction: isEditMode ? 'none' : 'auto', cursor: isEditMode ? 'crosshair' : 'auto' }}>
+
+                </canvas>
             </div>
 
             {/* {!isTherePdf && <div className="no-pdf-file-message">לא נמצא PDF קובץ</div>} */}
