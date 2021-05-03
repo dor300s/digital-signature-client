@@ -9,12 +9,13 @@ let ctx;
 let page;
 let renderCtx;
 const file = new FileReader();
-// const linkText = 'לקוח יקר זו הזמנת המקלחון החדש שלך ב אא מקלחונים אנא פתח את הקישור הכחול . לחץ על העיפרון (יהפוך לירוק) חתימה על המסך ואז בV לשליחה. תתחדשו';
-const linkText = `
-לקוח יקר,
-זו הזמנת המקלחון החדש שלך ב אא מקלחונים אנא פתח את הקישור הכחול .
-לחץ על העיפרון (יהפוך לירוק) חתימה על המסך ואז בV לשליחה.
-תתחדשו`;
+
+const linkText = ``;
+// const linkText = `
+// לקוח יקר,
+// זו הזמנת המקלחון החדש שלך ב אא מקלחונים אנא פתח את הקישור הכחול .
+// לחץ על העיפרון (יהפוך לירוק) חתימה על המסך ואז בV לשליחה.
+// תתחדשו`;
 
 const initialStyle = {
     left: (window.innerWidth - 85) + 'px',
@@ -127,17 +128,20 @@ export const CreatePdf = () => {
                         pattern="[0-9]{9-10}"
                         value={phoneNumber}
                         maxLength="10"
-                        placeholder="מספר טלפון"
+                        // placeholder="מספר טלפון"
+                        placeholder="Phone number (optional)"
                         type="tel"
                         style={{ width: navPosition.inputWidth, height: navPosition.inputHeight, fontSize: navPosition.inputFontSize }}
-                        onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/, ''))} />
+                        onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/, ''))}
+                    />
                 </div>
 
             </div>
             <div className="canvas-container" >
                 <canvas ref={canvasRef} className="pdf-canvas" hidden={!isPdfLoaded}></canvas>
             </div>
-            <div className="no-pdf-file-message" hidden={isPdfLoaded}>PDF אנא בחר קובץ</div>
+            <label className="no-pdf-file-message" htmlFor="pdf-file-input" hidden={isPdfLoaded}>Please select PDF file</label>
+            {/* <div className="no-pdf-file-message" hidden={isPdfLoaded}>PDF אנא בחר קובץ</div> */}
         </div>
     );
 }

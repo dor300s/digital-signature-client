@@ -92,7 +92,7 @@ export const EditPdf = (props) => {
             }
             img.src = data;
         }
-        document.body.style.zoom = 1.0
+        // document.body.style.zoom = 1.0
     }
 
     function onToggleEditMode() {
@@ -108,8 +108,10 @@ export const EditPdf = (props) => {
 
     function handleTouchDraw(e) {
         if (e.touches.length !== 1 || !isEditMode) return;
-        var x = e.touches[0].clientX - e.touches[0].target.offsetLeft;
-        var y = e.touches[0].clientY - e.touches[0].target.offsetTop;
+        // const x = e.touches[0].clientX + e.touches[0].target.offsetLeft;
+        // const y = e.touches[0].clientY - e.touches[0].target.offsetTop;
+        const x = e.touches[0].pageX + e.touches[0].target.offsetLeft;
+        const y = e.touches[0].pageY - e.touches[0].target.offsetTop;
         draw(x, y);
     }
 
@@ -177,7 +179,8 @@ export const EditPdf = (props) => {
     }
 
     function onDownloadPdf() {
-        const fileName = (loadedPdf?.current?.name || 'קבלה') + '.png';
+        // const fileName = (loadedPdf?.current?.name || 'קבלה') + '.png';
+        const fileName = (loadedPdf?.current?.name || 'pdf') + '.png';
         const a = document.createElement('a');
         a.href = canvasRef.current.toDataURL();
         a.download = fileName;
@@ -193,7 +196,8 @@ export const EditPdf = (props) => {
                     {!isPdfEdited ?
                         <button className={`done ${isLoading ? 'loading' : ''}`} onClick={onUpdatePdf} /> :
                         <>
-                            <div className="saved-successfuly flex align-center justify-center" ><p style={{ fontSize: navPosition.width }}>נשמר בהצלחה!</p></div>
+                            {/* <div className="saved-successfuly flex align-center justify-center" ><p style={{ fontSize: navPosition.width }}>נשמר בהצלחה!</p></div> */}
+                            <div className="saved-successfuly flex align-center justify-center" ><p style={{ fontSize: navPosition.width }}>Saved!</p></div>
                             <button className="download" onClick={onDownloadPdf} />
                         </>}
                 </div>
@@ -205,7 +209,8 @@ export const EditPdf = (props) => {
                     onTouchEnd={finishPosition} style={{ touchAction: isEditMode ? 'none' : 'auto' }}></canvas>
             </div>
 
-            {!isTherePdf && <div className="no-pdf-file-message">לא נמצא PDF קובץ</div>}
+            {/* {!isTherePdf && <div className="no-pdf-file-message">לא נמצא PDF קובץ</div>} */}
+            {!isTherePdf && <div className="no-pdf-file-message">PDF not found</div>}
 
         </div>
     );

@@ -71,7 +71,10 @@
                     cursor: text;
                     padding: 0 10px;
                     border-radius: 4px;
-                    direction: rtl;
+                    // direction: rtl;
+                    &::placeholder{
+                        font-size: 1rem;
+                    }
                 }
             }
         }
@@ -88,6 +91,9 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 1.5rem;
+        cursor: pointer;
+        border: 8vmin solid transparent;
+        white-space: nowrap;
     }
 }
 
